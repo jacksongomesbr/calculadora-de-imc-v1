@@ -27,6 +27,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final _formKey = GlobalKey<FormState>();
+
   final TextEditingController _controllerAltura = TextEditingController();
   final TextEditingController _controllerPeso = TextEditingController();
   String altura = '';
@@ -65,19 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       );
     } else {
-      return Container(
-        decoration: BoxDecoration(
-          color: Colors.red.shade100,
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: const Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Text(
-            'Para calcular o seu IMC é necessário que '
-            'você forneça seu peso e altura',
-          ),
-        ),
-      );
+      return Container();
     }
   }
 
@@ -109,22 +99,53 @@ class _MyHomePageState extends State<MyHomePage> {
                       Text('Forneça sua altura e seu peso para calcular o IMC'),
                 ),
               ),
-              TextField(
-                controller: _controllerAltura,
-                decoration: const InputDecoration(
-                  icon: Icon(Icons.swap_vertical_circle),
-                  hintText: 'Altura',
-                  helperText: 'Sua altura em centímetros',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              TextField(
-                controller: _controllerPeso,
-                decoration: const InputDecoration(
-                  icon: Icon(Icons.balance),
-                  hintText: 'Peso',
-                  helperText: 'Seu peso em kg',
-                  border: OutlineInputBorder(),
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: _controllerAltura,
+                      decoration: const InputDecoration(
+                        icon: Icon(Icons.swap_vertical_circle),
+                        hintText: 'Altura',
+                        helperText: 'Sua altura em centímetros',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Por favor, informe a altura';
+                        }
+                        return null;
+                      },
+                      onChanged: (value) {
+                        print('altura - onChanged: $value');
+                      },
+                      onSaved: (value) {
+                        setState(() {
+                          altura = value!;
+                        });
+                      },
+                    ),
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        icon: Icon(Icons.balance),
+                        hintText: 'Peso',
+                        helperText: 'Seu peso em kg',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Por favor, informe o peso';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        setState(() {
+                          peso = value!;
+                        });
+                      },
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(
@@ -132,10 +153,9 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  setState(() {
-                    altura = _controllerAltura.text;
-                    peso = _controllerPeso.text;
-                  });
+                  if (_formKey.currentState!.validate()) {
+                    _formKey.currentState!.save();
+                  }
                 },
                 child: const Text('CALCULAR'),
                 style: ElevatedButton.styleFrom(
