@@ -29,8 +29,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _controllerAltura = TextEditingController();
-  final TextEditingController _controllerPeso = TextEditingController();
   String altura = '';
   String peso = '';
 
@@ -104,7 +102,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Column(
                   children: [
                     TextFormField(
-                      controller: _controllerAltura,
                       decoration: const InputDecoration(
                         icon: Icon(Icons.swap_vertical_circle),
                         hintText: 'Altura',
